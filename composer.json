@@ -1,0 +1,12 @@
+{
+  "name": "pixlmint/pixlcms-journal-plugin",
+  "description": "The official journaling plugin for PixlCMS",
+  "require": {
+    "ext-json":  "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "PixlMint\\Journal\\": "src/"
+    }
+  }
+}
