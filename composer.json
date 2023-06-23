@@ -6,7 +6,7 @@
   },
   "autoload": {
     "psr-4": {
-      "PixlMint\\Journal\\": "src/"
+      "PixlMint\\JournalPlugin\\": "src/"
     }
   }
 }
