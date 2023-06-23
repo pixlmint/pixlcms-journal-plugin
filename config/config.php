@@ -1,21 +1,7 @@
 <?php
 
-use PixlMint\JournalPlugin\Controllers\CacheController;
-use PixlMint\JournalPlugin\Controllers\EntriesController;
-
 return [
-    'routes' => [
-        [
-            'route' => '/api/entries',
-            'controller' => EntriesController::class,
-            'function' => 'loadEntries',
-        ],
-        [
-            'route' => '/api/admin/build-cache',
-            'controller' => CacheController::class,
-            'function' => 'buildCache',
-        ],
-    ],
+    'routes' => require_once('routes.php'),
     'journal' => require_once('journal.php'),
     'hooks' => [
         [
