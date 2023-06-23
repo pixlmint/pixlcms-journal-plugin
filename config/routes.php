@@ -16,7 +16,7 @@ return [
         'function' => 'buildCache',
     ],
     [
-        'route' => '/api/admin/edit-current',
+        'route' => '/api/admin/current',
         'controller' => AdminController::class,
         'function' => 'editCurrent',
     ]
