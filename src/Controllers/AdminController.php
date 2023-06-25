@@ -4,12 +4,39 @@ namespace PixlMint\JournalPlugin\Controllers;
 
 use DateTime;
 use Nacho\Controllers\AbstractController;
+use Nacho\Models\HttpMethod;
 use Nacho\Models\Request;
+use PixlMint\CMS\Helpers\CMSConfiguration;
 use PixlMint\CMS\Helpers\CustomUserHelper;
+use PixlMint\JournalPlugin\Helpers\CacheHelper;
 use PixlMint\JournalPlugin\Models\RaceReport;
 
 class AdminController extends AbstractController
 {
+    public function edit(Request $request): string
+    {
+        $parent = new \PixlMint\CMS\Controllers\AdminController($this->nacho);
+        $ret = $parent->edit($request);
+
+        if (strtoupper($request->requestMethod) === HttpMethod::PUT) {
+            $cacheHelper = new CacheHelper($this->nacho);
+            $cacheHelper->build();
+        }
+
+        return $ret;
+    }
+
+    public function buildCache(): string
+    {
+        if (!$this->isGranted(CustomUserHelper::ROLE_EDITOR)) {
+            return $this->json(['message' => 'You are not authenticated'], 401);
+        }
+
+        $cacheHelper = new CacheHelper($this->nacho);
+        $cacheHelper->build();
+        return $this->json(['success' => true]);
+    }
+
     public function editCurrent(): string
     {
         $file = $this->getCurrentFile();
@@ -30,7 +57,7 @@ class AdminController extends AbstractController
         if (!$entry) {
             $this->createSpecific();
         }
-        $this->nacho->getMarkdownHelper()->editPage($entry->id, '', ['raceReport' => (array) $raceReport]);
+        $this->nacho->getMarkdownHelper()->editPage($entry->id, '', ['raceReport' => (array)$raceReport]);
 
         return $this->json(['message' => 'Successfully stored Race Report']);
     }
@@ -52,15 +79,16 @@ class AdminController extends AbstractController
     {
         $title = $dateEntry->format('Y-m-d') . '.md';
         $month = $dateEntry->format('F');
-        $folderDir = $_SERVER['DOCUMENT_ROOT'] . "/content/${month}";
+        $folderDir = CMSConfiguration::contentDir() . DIRECTORY_SEPARATOR . $month;
         $fileDir = "${folderDir}/${title}";
-        // check if file exists, if not create it
         $content =
             "---\ntitle: " .
             rtrim($title, '.md') .
             "\ndate: " .
             $dateEntry->format('Y-m-d H:i') .
             "\n---\n";
+
+        // check if file exists, if not create it
         if (!is_dir($folderDir)) {
             mkdir($folderDir);
         }

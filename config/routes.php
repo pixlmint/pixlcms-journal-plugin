@@ -19,5 +19,15 @@ return [
         'route' => '/api/admin/entry/edit/current',
         'controller' => AdminController::class,
         'function' => 'editCurrent',
-    ]
+    ],
+    [
+        "route" => "/api/admin/entry/edit",
+        "controller" => AdminController::class,
+        "function" => "edit"
+    ],
+    [
+        'route' => '/api/admin/cache/build',
+        'controller' => AdminController::class,
+        'function' => 'buildCache',
+    ],
 ];
