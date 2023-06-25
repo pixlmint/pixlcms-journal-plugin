@@ -26,17 +26,6 @@ class AdminController extends AbstractController
         return $ret;
     }
 
-    public function buildCache(): string
-    {
-        if (!$this->isGranted(CustomUserHelper::ROLE_EDITOR)) {
-            return $this->json(['message' => 'You are not authenticated'], 401);
-        }
-
-        $cacheHelper = new CacheHelper($this->nacho);
-        $cacheHelper->build();
-        return $this->json(['success' => true]);
-    }
-
     public function editCurrent(): string
     {
         $file = $this->getCurrentFile();
