@@ -30,4 +30,14 @@ return [
         "controller" => AdminController::class,
         "function" => "edit"
     ],
+    [
+        'route' => '/api/journal/month',
+        'controller' => EntriesController::class,
+        'function' => 'loadMonth',
+    ],
+    [
+        'route' => '/api/journal/list-months',
+        'controller' => EntriesController::class,
+        'function' => 'getMonthsList',
+    ],
 ];
