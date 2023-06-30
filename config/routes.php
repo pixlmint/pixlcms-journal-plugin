@@ -26,6 +26,11 @@ return [
         'function' => 'editCurrent',
     ],
     [
+        'route' => '/api/admin/entry/create',
+        'controller' => AdminController::class,
+        'function' => 'createSpecific',
+    ],
+    [
         "route" => "/api/admin/entry/edit",
         "controller" => AdminController::class,
         "function" => "edit"
