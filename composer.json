@@ -2,7 +2,8 @@
   "name": "pixlmint/pixlcms-journal-plugin",
   "description": "The official journaling plugin for PixlCMS",
   "require": {
-    "ext-json":  "*"
+    "ext-json":  "*",
+    "pixlmint/pixl-cms": "*"
   },
   "autoload": {
     "psr-4": {
