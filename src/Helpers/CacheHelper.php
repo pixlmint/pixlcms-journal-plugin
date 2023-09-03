@@ -36,8 +36,8 @@ class CacheHelper
 
     private function renderContent(): array
     {
-        $this->nacho->getMarkdownHelper()->readPages();
-        $pages = $this->nacho->getMarkdownHelper()->getPages();
+        $this->nacho->getPageManager()->readPages();
+        $pages = $this->nacho->getPageManager()->getPages();
         usort($pages, [$this, 'sortByDate']);
         $months = [];
         foreach ($pages as $page) {
@@ -51,7 +51,7 @@ class CacheHelper
             if ($this->isEmptyContent($page)) {
                 continue;
             }
-            $page->content = $this->nacho->getMarkdownHelper()->renderPage($page);
+            $page->content = $this->nacho->getPageManager()->renderPage($page);
             $months[$month]['days'][] = $page;
         }
 

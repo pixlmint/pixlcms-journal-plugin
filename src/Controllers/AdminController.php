@@ -42,11 +42,11 @@ class AdminController extends AbstractController
             return $this->json(['message' => 'You need to be authenticated'], 401);
         }
         $raceReport = new RaceReport($request->getBody()['raceReport']);
-        $entry = $this->nacho->getMarkdownHelper()->getPage($request->getBody()['entry']);
+        $entry = $this->nacho->getPageManager()->getPage($request->getBody()['entry']);
         if (!$entry) {
             $this->createSpecific();
         }
-        $this->nacho->getMarkdownHelper()->editPage($entry->id, '', ['raceReport' => (array)$raceReport]);
+        $this->nacho->getPageManager()->editPage($entry->id, '', ['raceReport' => (array)$raceReport]);
 
         return $this->json(['message' => 'Successfully stored Race Report']);
     }
