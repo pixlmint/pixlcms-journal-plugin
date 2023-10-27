@@ -3,8 +3,10 @@
   "description": "The official journaling plugin for PixlCMS",
   "require": {
     "ext-json":  "*",
-    "pixlmint/pixl-cms": "*"
+    "pixlmint/pixl-cms": "*",
+    "pixlmint/pixlcms-media-plugin": "*"
   },
+  "minimum-stability": "stable",
   "autoload": {
     "psr-4": {
       "PixlMint\\JournalPlugin\\": "src/"
