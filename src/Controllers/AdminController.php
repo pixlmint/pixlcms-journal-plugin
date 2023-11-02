@@ -5,6 +5,7 @@ namespace PixlMint\JournalPlugin\Controllers;
 use DateTime;
 use Nacho\Controllers\AbstractController;
 use Nacho\Models\HttpMethod;
+use Nacho\Models\HttpResponse;
 use Nacho\Models\Request;
 use PixlMint\CMS\Helpers\CMSConfiguration;
 use PixlMint\CMS\Helpers\CustomUserHelper;
@@ -13,7 +14,7 @@ use PixlMint\JournalPlugin\Models\RaceReport;
 
 class AdminController extends AbstractController
 {
-    public function edit(Request $request): string
+    public function edit(Request $request): HttpResponse
     {
         $parent = new \PixlMint\CMS\Controllers\AdminController($this->nacho);
         $ret = $parent->edit($request);
@@ -26,14 +27,14 @@ class AdminController extends AbstractController
         return $ret;
     }
 
-    public function editCurrent(): string
+    public function editCurrent(): HttpResponse
     {
         $file = $this->getCurrentFile();
 
         return $this->json(['entryId' => rtrim($file, '.md')]);
     }
 
-    public function uploadRaceReport(Request $request): bool|string
+    public function uploadRaceReport(Request $request): HttpResponse
     {
         if (!key_exists('token', $request->getBody()) || !key_exists('raceReport', $request->getBody()) || !key_exists('entry', $request->getBody())) {
             return $this->json(['message' => 'You need to provide a token, raceReport and the entry'], 400);
@@ -51,7 +52,7 @@ class AdminController extends AbstractController
         return $this->json(['message' => 'Successfully stored Race Report']);
     }
 
-    function createSpecific(): string
+    function createSpecific(): HttpResponse
     {
         $dateFile = $_REQUEST['entry'];
         $entryId = $this->createFileIfNotExists(new DateTime($dateFile));

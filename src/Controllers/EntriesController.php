@@ -3,13 +3,14 @@
 namespace PixlMint\JournalPlugin\Controllers;
 
 use Nacho\Controllers\AbstractController;
+use Nacho\Models\HttpResponse;
 use PixlMint\CMS\Models\Cache;
 use PixlMint\JournalPlugin\Helpers\CacheHelper;
 use PixlMint\JournalPlugin\Helpers\JournalConfiguration;
 
 class EntriesController extends AbstractController
 {
-    public function loadEntries(): string
+    public function loadEntries(): HttpResponse
     {
         $cache = $this->getCachedMonths();
 
@@ -22,12 +23,12 @@ class EntriesController extends AbstractController
         return $this->json($content);
     }
 
-    public function getMonthsList(): string
+    public function getMonthsList(): HttpResponse
     {
         return $this->json($this->listMonths());
     }
 
-    public function loadMonth(): string
+    public function loadMonth(): HttpResponse
     {
         $cachedEntries = $this->getCachedMonths();
         if (key_exists('month', $_GET)) {
