@@ -2,5 +2,5 @@
 
 return [
     'year' => 2023,
-    'version' => '2023.11',
+    'version' => '2023.12',
 ];
