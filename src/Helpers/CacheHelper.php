@@ -2,22 +2,21 @@
 
 namespace PixlMint\JournalPlugin\Helpers;
 
+use Nacho\Contracts\PageManagerInterface;
 use Nacho\Models\PicoPage;
-use Nacho\Nacho;
 use Nacho\ORM\RepositoryInterface;
-use Nacho\ORM\RepositoryManager;
 use PixlMint\CMS\Models\Cache;
 use PixlMint\CMS\Repository\CacheRepository;
 
 class CacheHelper
 {
-    private Nacho $nacho;
     private CacheRepository|RepositoryInterface $repository;
+    private PageManagerInterface $pageManager;
     const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-    public function __construct($nacho) {
-        $this->nacho = $nacho;
-        $this->repository = RepositoryManager::getInstance()->getRepository(CacheRepository::class);
+    public function __construct(PageManagerInterface $pageManager, CacheRepository $repository) {
+        $this->pageManager = $pageManager;
+        $this->repository = $repository;
     }
 
     public function build(): void
@@ -36,8 +35,8 @@ class CacheHelper
 
     private function renderContent(): array
     {
-        $this->nacho->getPageManager()->readPages();
-        $pages = $this->nacho->getPageManager()->getPages();
+        $this->pageManager->readPages();
+        $pages = $this->pageManager->getPages();
         usort($pages, [$this, 'sortByDate']);
         $months = [];
         foreach ($pages as $page) {
@@ -51,7 +50,7 @@ class CacheHelper
             if ($this->isEmptyContent($page)) {
                 continue;
             }
-            $page->content = $this->nacho->getPageManager()->renderPage($page);
+            $page->content = $this->pageManager->renderPage($page);
             $months[$month]['days'][] = $page;
         }
 

@@ -3,24 +3,30 @@
 namespace PixlMint\JournalPlugin\Helpers;
 
 use Nacho\Exceptions\ConfigurationDoesNotExistException;
-use Nacho\Helpers\ConfigurationHelper;
+use Nacho\Helpers\ConfigurationContainer;
 
 class JournalConfiguration
 {
-    public static function year(): mixed
+    private ConfigurationContainer $configurationContainer;
+
+    public function __construct(ConfigurationContainer $configurationContainer)
     {
-        return self::getJournalConfig('year');
+        $this->configurationContainer = $configurationContainer;
     }
 
-    public static function version(): string
+    public function year(): mixed
     {
-        return self::getJournalConfig('version');
+        return $this->getJournalConfig('year');
     }
 
-    private static function getJournalConfig(string $configName): mixed
+    public function version(): string
     {
-        $helper = ConfigurationHelper::getInstance();
-        $config = $helper->getCustomConfig('journal');
+        return $this->getJournalConfig('version');
+    }
+
+    private function getJournalConfig(string $configName): mixed
+    {
+        $config = $this->configurationContainer->getCustomConfig('journal');
 
         if (!key_exists($configName, $config)) {
             throw new ConfigurationDoesNotExistException("${configName} does not exist in journal configuration");

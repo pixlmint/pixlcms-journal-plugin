@@ -10,6 +10,16 @@ use PixlMint\JournalPlugin\Helpers\JournalConfiguration;
 
 class EntriesController extends AbstractController
 {
+    private JournalConfiguration $configuration;
+    private CacheHelper $cacheHelper;
+
+    public function __construct(JournalConfiguration $configuration, CacheHelper $cacheHelper)
+    {
+        parent::__construct();
+        $this->configuration = $configuration;
+        $this->cacheHelper = $cacheHelper;
+    }
+
     public function loadEntries(): HttpResponse
     {
         $cache = $this->getCachedMonths();
@@ -67,11 +77,10 @@ class EntriesController extends AbstractController
 
     private function getCachedMonths(): Cache
     {
-        $cacheHelper = new CacheHelper($this->nacho);
-        $cache = $cacheHelper->read();
+        $cache = $this->cacheHelper->read();
         if (!$cache) {
-            $cacheHelper->build();
-            $cache = $cacheHelper->read();
+            $this->cacheHelper->build();
+            $cache = $this->cacheHelper->read();
         }
 
         return $cache;
@@ -87,7 +96,7 @@ class EntriesController extends AbstractController
 
     private function journalIsCurrentYear(): bool
     {
-        $journalYear = JournalConfiguration::year();
+        $journalYear = $this->configuration->year();
         $now = new \DateTime();
         $currentYear = intval($now->format('Y'));
 
