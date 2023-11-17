@@ -3,10 +3,13 @@
 namespace PixlMint\JournalPlugin\Controllers;
 
 use DateTime;
+use Nacho\Contracts\PageManagerInterface;
+use Nacho\Contracts\RequestInterface;
 use Nacho\Controllers\AbstractController;
 use Nacho\Models\HttpMethod;
 use Nacho\Models\HttpResponse;
 use Nacho\Models\Request;
+use Nacho\Nacho;
 use PixlMint\CMS\Helpers\CMSConfiguration;
 use PixlMint\CMS\Helpers\CustomUserHelper;
 use PixlMint\JournalPlugin\Helpers\CacheHelper;
@@ -14,13 +17,21 @@ use PixlMint\JournalPlugin\Models\RaceReport;
 
 class AdminController extends AbstractController
 {
-    public function edit(Request $request): HttpResponse
+    private PageManagerInterface $pageManager;
+    private CMSConfiguration $cmsConfiguration;
+
+    public function __construct(PageManagerInterface $pageManager, CMSConfiguration $cmsConfiguration)
     {
-        $parent = new \PixlMint\CMS\Controllers\AdminController($this->nacho);
+        parent::__construct();
+        $this->pageManager = $pageManager;
+        $this->cmsConfiguration = $cmsConfiguration;
+    }
+
+    public function edit(RequestInterface $request, \PixlMint\CMS\Controllers\AdminController $parent, CacheHelper $cacheHelper): HttpResponse
+    {
         $ret = $parent->edit($request);
 
         if (strtoupper($request->requestMethod) === HttpMethod::PUT) {
-            $cacheHelper = new CacheHelper($this->nacho);
             $cacheHelper->build();
         }
 
@@ -43,11 +54,11 @@ class AdminController extends AbstractController
             return $this->json(['message' => 'You need to be authenticated'], 401);
         }
         $raceReport = new RaceReport($request->getBody()['raceReport']);
-        $entry = $this->nacho->getPageManager()->getPage($request->getBody()['entry']);
+        $entry = $this->pageManager->getPage($request->getBody()['entry']);
         if (!$entry) {
             $this->createSpecific();
         }
-        $this->nacho->getPageManager()->editPage($entry->id, '', ['raceReport' => (array)$raceReport]);
+        $this->pageManager->editPage($entry->id, '', ['raceReport' => (array)$raceReport]);
 
         return $this->json(['message' => 'Successfully stored Race Report']);
     }
@@ -69,7 +80,7 @@ class AdminController extends AbstractController
     {
         $title = $dateEntry->format('Y-m-d') . '.md';
         $month = $dateEntry->format('F');
-        $folderDir = CMSConfiguration::contentDir() . DIRECTORY_SEPARATOR . $month;
+        $folderDir = $this->cmsConfiguration->contentDir() . DIRECTORY_SEPARATOR . $month;
         $fileDir = "${folderDir}/${title}";
         $content =
             "---\ntitle: " .
