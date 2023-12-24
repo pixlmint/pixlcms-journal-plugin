@@ -6,6 +6,7 @@ use DateTime;
 use Nacho\Contracts\PageManagerInterface;
 use Nacho\Contracts\RequestInterface;
 use Nacho\Controllers\AbstractController;
+use Nacho\Helpers\PicoVersioningHelper;
 use Nacho\Models\HttpMethod;
 use Nacho\Models\HttpResponse;
 use Nacho\Models\Request;
@@ -27,9 +28,9 @@ class AdminController extends AbstractController
         $this->cmsConfiguration = $cmsConfiguration;
     }
 
-    public function edit(RequestInterface $request, \PixlMint\CMS\Controllers\AdminController $parent, CacheHelper $cacheHelper): HttpResponse
+    public function edit(RequestInterface $request, \PixlMint\CMS\Controllers\AdminController $parent, CacheHelper $cacheHelper, PicoVersioningHelper $versioningHelper): HttpResponse
     {
-        $ret = $parent->edit($request);
+        $ret = $parent->edit($request, $versioningHelper);
 
         if (strtoupper($request->requestMethod) === HttpMethod::PUT) {
             $cacheHelper->build();
