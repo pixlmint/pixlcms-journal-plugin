@@ -10,7 +10,6 @@ use Nacho\Helpers\PicoVersioningHelper;
 use Nacho\Models\HttpMethod;
 use Nacho\Models\HttpResponse;
 use Nacho\Models\Request;
-use Nacho\Nacho;
 use PixlMint\CMS\Helpers\CMSConfiguration;
 use PixlMint\CMS\Helpers\CustomUserHelper;
 use PixlMint\JournalPlugin\Helpers\CacheHelper;
@@ -62,6 +61,14 @@ class AdminController extends AbstractController
         $this->pageManager->editPage($entry->id, '', ['raceReport' => (array)$raceReport]);
 
         return $this->json(['message' => 'Successfully stored Race Report']);
+    }
+
+    public function delete(RequestInterface $request, \PixlMint\CMS\Controllers\AdminController $cmsAdminController, CacheHelper $cacheHelper): HttpResponse
+    {
+        $response = $cmsAdminController->delete($request);
+        $cacheHelper->build();
+
+        return $response;
     }
 
     function createSpecific(): HttpResponse
