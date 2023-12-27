@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'year' => 2023,
-    'version' => '2023.14',
+    'year' => 2024,
+    'version' => '2024.1',
 ];
