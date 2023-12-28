@@ -89,7 +89,7 @@ class AdminController extends AbstractController
         $title = $dateEntry->format('Y-m-d') . '.md';
         $month = $dateEntry->format('F');
         $folderDir = $this->cmsConfiguration->contentDir() . DIRECTORY_SEPARATOR . $month;
-        $fileDir = "${folderDir}/${title}";
+        $fileDir = "{$folderDir}/{$title}";
         $content =
             "---\ntitle: " .
             rtrim($title, '.md') .
@@ -105,6 +105,6 @@ class AdminController extends AbstractController
             file_put_contents($fileDir, $content);
         }
 
-        return "/${month}/" . rtrim($title, '.md');
+        return "/{$month}/" . rtrim($title, '.md');
     }
 }

@@ -29,7 +29,7 @@ class JournalConfiguration
         $config = $this->configurationContainer->getCustomConfig('journal');
 
         if (!key_exists($configName, $config)) {
-            throw new ConfigurationDoesNotExistException("${configName} does not exist in journal configuration");
+            throw new ConfigurationDoesNotExistException("{$configName} does not exist in journal configuration");
         }
 
         return $config[$configName];
