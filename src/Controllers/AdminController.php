@@ -47,7 +47,7 @@ class AdminController extends AbstractController
 
     public function uploadRaceReport(Request $request): HttpResponse
     {
-        if (!key_exists('token', $request->getBody()) || !key_exists('raceReport', $request->getBody()) || !key_exists('entry', $request->getBody())) {
+        if (!$request->getBody()->has('token') || !$request->getBody()->has('raceReport') || !$request->getBody()->has('entry')) {
             return $this->json(['message' => 'You need to provide a token, raceReport and the entry'], 400);
         }
         if (!$this->isGranted(CustomUserHelper::ROLE_EDITOR)) {

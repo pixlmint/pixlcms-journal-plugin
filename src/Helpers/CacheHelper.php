@@ -73,7 +73,7 @@ class CacheHelper
 
     private function isEmptyContent(PicoPage $page): bool
     {
-        return !$page->raw_content && !key_exists('raceReport', (array) $page->meta);
+        return !$page->raw_content && !key_exists('raceReport', $page->meta->toArray());
     }
 
 }
