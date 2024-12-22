@@ -14,6 +14,7 @@ use PixlMint\CMS\Helpers\CMSConfiguration;
 use PixlMint\CMS\Helpers\CustomUserHelper;
 use PixlMint\JournalPlugin\Helpers\CacheHelper;
 use PixlMint\JournalPlugin\Models\RaceReport;
+use PixlMint\CMS\Controllers\AdminController as CmsAdminController;
 
 class AdminController extends AbstractController
 {
@@ -27,8 +28,9 @@ class AdminController extends AbstractController
         $this->cmsConfiguration = $cmsConfiguration;
     }
 
-    public function edit(RequestInterface $request, \PixlMint\CMS\Controllers\AdminController $parent, CacheHelper $cacheHelper, PicoVersioningHelper $versioningHelper): HttpResponse
+    public function edit(RequestInterface $request, CmsAdminController $parent, CacheHelper $cacheHelper, PicoVersioningHelper $versioningHelper): HttpResponse
     {
+        // TODO: the journal currently uses the edit endpoint to get the markdown content which is no longer supported, make it use view instead
         $ret = $parent->edit($request, $versioningHelper);
 
         if (strtoupper($request->requestMethod) === HttpMethod::PUT) {
@@ -54,7 +56,7 @@ class AdminController extends AbstractController
             return $this->json(['message' => 'You need to be authenticated'], 401);
         }
         $raceReport = new RaceReport($request->getBody()['raceReport']);
-        $entry = $this->pageManager->getPage($request->getBody()['entry']);
+        $entry = $this->pageManager->getPage($request->getBody()->get('entry'));
         if (!$entry) {
             $this->createSpecific();
         }
@@ -63,7 +65,7 @@ class AdminController extends AbstractController
         return $this->json(['message' => 'Successfully stored Race Report']);
     }
 
-    public function delete(RequestInterface $request, \PixlMint\CMS\Controllers\AdminController $cmsAdminController, CacheHelper $cacheHelper): HttpResponse
+    public function delete(RequestInterface $request, CmsAdminController $cmsAdminController, CacheHelper $cacheHelper): HttpResponse
     {
         $response = $cmsAdminController->delete($request);
         $cacheHelper->build();
@@ -71,7 +73,7 @@ class AdminController extends AbstractController
         return $response;
     }
 
-    function createSpecific(): HttpResponse
+    public function createSpecific(): HttpResponse
     {
         $dateFile = $_REQUEST['entry'];
         $entryId = $this->createFileIfNotExists(new DateTime($dateFile));
@@ -86,25 +88,28 @@ class AdminController extends AbstractController
 
     private function createFileIfNotExists(DateTime $dateEntry): string
     {
-        $title = $dateEntry->format('Y-m-d') . '.md';
+        $title = $dateEntry->format('Y-m-d');
         $month = $dateEntry->format('F');
         $folderDir = $this->cmsConfiguration->contentDir() . DIRECTORY_SEPARATOR . $month;
         $fileDir = "{$folderDir}/{$title}";
-        $content =
-            "---\ntitle: " .
-            rtrim($title, '.md') .
-            "\ndate: " .
-            $dateEntry->format('Y-m-d H:i') .
-            "\n---\n";
+        /*$content =*/
+        /*    "---\ntitle: " .*/
+        /*    rtrim($title, '.md') .*/
+        /*    "\ndate: " .*/
+        /*    $dateEntry->format('Y-m-d H:i') .*/
+        /*    "\n---\n";*/
 
         // check if file exists, if not create it
         if (!is_dir($folderDir)) {
-            mkdir($folderDir);
+            $this->pageManager->create("/", $month, true);
+            // mkdir($folderDir);
         }
-        if (!is_file($fileDir)) {
-            file_put_contents($fileDir, $content);
+        if (!is_file($fileDir . ".md")) {
+            $this->pageManager->create("/$month", $title);
+            // file_put_contents($fileDir, $content);
         }
 
         return "/{$month}/" . rtrim($title, '.md');
     }
 }
+

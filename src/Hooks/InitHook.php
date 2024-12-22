@@ -11,14 +11,13 @@ class InitHook implements InitFunction
 
     public function __construct(JournalConfiguration $configuration)
     {
-
         $this->configuration = $configuration;
     }
 
     public function call(array $init): array
     {
-        $init['journalVersion'] = $this->configuration->version();
-        $init['journalYear'] = $this->configuration->year();
+        $init['feVersion'] = $this->configuration->version();
+        $init['feYear'] = $this->configuration->year();
 
         return $init;
     }
