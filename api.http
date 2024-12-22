@@ -1,0 +1,7 @@
+GET {{HOST}}/api/admin/build-cache
+PIXLTOKEN: {{PIXLTOKEN}}
+
+###
+
+GET {{HOST}}/api/admin/entry/edit/current
+PIXLTOKEN: {{PIXLTOKEN}}

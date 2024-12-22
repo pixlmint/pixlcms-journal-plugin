@@ -37,6 +37,7 @@ class CacheHelper
     {
         $this->pageManager->readPages();
         $pages = $this->pageManager->getPages();
+        $pages = $this->filterMetaEntries($pages);
         usort($pages, [$this, 'sortByDate']);
         $months = [];
         foreach ($pages as $page) {
@@ -57,16 +58,28 @@ class CacheHelper
         return $months;
     }
 
+    /**
+     * @param array|PicoPage[] $entries
+     * @return array|PicoPage[]
+     */
+    private function filterMetaEntries(array $entries): array
+    {
+        $ret = [];
+
+        foreach ($entries as $url => $entry) {
+            /** @var PicoPage $entry */
+            if (!str_ends_with($entry->file, "index.md")) {
+                $ret[$url] = $entry;   
+            }
+        }
+
+        return $ret;
+    }
+
     private function sortByDate(PicoPage $a, PicoPage $b): int
     {
-        if (is_int(array_search($a->meta->title, self::MONTHS))) {
-            return -1;
-        }
-        if (is_int(array_search($b->meta->title, self::MONTHS))) {
-            return 1;
-        }
-        $t1 = strtotime($a->meta->title);
-        $t2 = strtotime($b->meta->title);
+        $t1 = date_create_from_format("d.m.Y", $a->meta->title)->getTimestamp();
+        $t2 = date_create_from_format("d.m.Y", $b->meta->title)->getTimestamp();
 
         return $t2 - $t1;
     }

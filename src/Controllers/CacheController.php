@@ -9,6 +9,7 @@ use PixlMint\JournalPlugin\Helpers\CacheHelper;
 
 class CacheController extends AbstractController
 {
+    /** GET: /api/admin/build-cache */
     public function buildCache(CacheHelper $cacheHelper): HttpResponse
     {
         if (!$this->isGranted(CustomUserHelper::ROLE_EDITOR)) {

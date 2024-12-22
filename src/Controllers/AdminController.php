@@ -7,10 +7,8 @@ use Nacho\Contracts\PageManagerInterface;
 use Nacho\Contracts\RequestInterface;
 use Nacho\Controllers\AbstractController;
 use Nacho\Helpers\PicoVersioningHelper;
-use Nacho\Models\HttpMethod;
 use Nacho\Models\HttpResponse;
 use Nacho\Models\Request;
-use PixlMint\CMS\Helpers\CMSConfiguration;
 use PixlMint\CMS\Helpers\CustomUserHelper;
 use PixlMint\JournalPlugin\Helpers\CacheHelper;
 use PixlMint\JournalPlugin\Models\RaceReport;
@@ -19,23 +17,20 @@ use PixlMint\CMS\Controllers\AdminController as CmsAdminController;
 class AdminController extends AbstractController
 {
     private PageManagerInterface $pageManager;
-    private CMSConfiguration $cmsConfiguration;
 
-    public function __construct(PageManagerInterface $pageManager, CMSConfiguration $cmsConfiguration)
+    public function __construct(PageManagerInterface $pageManager)
     {
         parent::__construct();
         $this->pageManager = $pageManager;
-        $this->cmsConfiguration = $cmsConfiguration;
     }
 
+    /**
+     * Extends the primary Edit Controller to allow automatic recaching
+     */
     public function edit(RequestInterface $request, CmsAdminController $parent, CacheHelper $cacheHelper, PicoVersioningHelper $versioningHelper): HttpResponse
     {
-        // TODO: the journal currently uses the edit endpoint to get the markdown content which is no longer supported, make it use view instead
         $ret = $parent->edit($request, $versioningHelper);
-
-        if (strtoupper($request->requestMethod) === HttpMethod::PUT) {
-            $cacheHelper->build();
-        }
+        $cacheHelper->build();
 
         return $ret;
     }
@@ -90,26 +85,18 @@ class AdminController extends AbstractController
     {
         $title = $dateEntry->format('Y-m-d');
         $month = $dateEntry->format('F');
-        $folderDir = $this->cmsConfiguration->contentDir() . DIRECTORY_SEPARATOR . $month;
-        $fileDir = "{$folderDir}/{$title}";
-        /*$content =*/
-        /*    "---\ntitle: " .*/
-        /*    rtrim($title, '.md') .*/
-        /*    "\ndate: " .*/
-        /*    $dateEntry->format('Y-m-d H:i') .*/
-        /*    "\n---\n";*/
+        $parentId = strtolower("/$month");
+        $entryId = strtolower("/$month/$title");
 
-        // check if file exists, if not create it
-        if (!is_dir($folderDir)) {
+        if (is_null($this->pageManager->getPage($parentId))) {
             $this->pageManager->create("/", $month, true);
-            // mkdir($folderDir);
-        }
-        if (!is_file($fileDir . ".md")) {
-            $this->pageManager->create("/$month", $title);
-            // file_put_contents($fileDir, $content);
         }
 
-        return "/{$month}/" . rtrim($title, '.md');
+        if (is_null($this->pageManager->getPage($entryId))) {
+            $this->pageManager->create($parentId, $title);
+        }
+
+        return $entryId;
     }
 }
 

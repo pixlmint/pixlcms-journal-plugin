@@ -20,6 +20,7 @@ class EntriesController extends AbstractController
         $this->cacheHelper = $cacheHelper;
     }
 
+    /** GET: /api/entries */
     public function loadEntries(): HttpResponse
     {
         $cache = $this->getCachedMonths();
