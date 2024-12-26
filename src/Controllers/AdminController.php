@@ -6,13 +6,14 @@ use DateTime;
 use Nacho\Contracts\PageManagerInterface;
 use Nacho\Contracts\RequestInterface;
 use Nacho\Controllers\AbstractController;
-use Nacho\Helpers\PicoVersioningHelper;
 use Nacho\Models\HttpResponse;
 use Nacho\Models\Request;
 use PixlMint\CMS\Helpers\CustomUserHelper;
 use PixlMint\JournalPlugin\Helpers\CacheHelper;
 use PixlMint\JournalPlugin\Models\RaceReport;
 use PixlMint\CMS\Controllers\AdminController as CmsAdminController;
+use PixlMint\CMS\Helpers\Admin\BaseEntryHandler;
+use PixlMint\CMS\Helpers\Admin\EditContentHandler;
 
 class AdminController extends AbstractController
 {
@@ -27,9 +28,9 @@ class AdminController extends AbstractController
     /**
      * Extends the primary Edit Controller to allow automatic recaching
      */
-    public function edit(RequestInterface $request, CmsAdminController $parent, CacheHelper $cacheHelper, PicoVersioningHelper $versioningHelper): HttpResponse
+    public function edit(CmsAdminController $parent, CacheHelper $cacheHelper, EditContentHandler $contentHandler): HttpResponse
     {
-        $ret = $parent->edit($request, $versioningHelper);
+        $ret = $parent->edit($contentHandler);
         $cacheHelper->build();
 
         return $ret;
@@ -60,9 +61,9 @@ class AdminController extends AbstractController
         return $this->json(['message' => 'Successfully stored Race Report']);
     }
 
-    public function delete(RequestInterface $request, CmsAdminController $cmsAdminController, CacheHelper $cacheHelper): HttpResponse
+    public function delete(RequestInterface $request, CmsAdminController $cmsAdminController, CacheHelper $cacheHelper, BaseEntryHandler $entryHandler): HttpResponse
     {
-        $response = $cmsAdminController->delete($request);
+        $response = $cmsAdminController->delete($entryHandler, $request);
         $cacheHelper->build();
 
         return $response;
