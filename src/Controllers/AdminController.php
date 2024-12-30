@@ -31,7 +31,7 @@ class AdminController extends AbstractController
     public function edit(CmsAdminController $parent, CacheHelper $cacheHelper, EditContentHandler $contentHandler): HttpResponse
     {
         $ret = $parent->edit($contentHandler);
-        $cacheHelper->build();
+        // $cacheHelper->build();
 
         return $ret;
     }
