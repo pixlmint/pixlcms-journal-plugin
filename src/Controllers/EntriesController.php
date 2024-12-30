@@ -78,11 +78,12 @@ class EntriesController extends AbstractController
 
     private function getCachedMonths(): Cache
     {
+        // TODO: Recativate Caching
+        // $cache = $this->cacheHelper->read();
+        // if (!$cache) {
+        $this->cacheHelper->build();
         $cache = $this->cacheHelper->read();
-        if (!$cache) {
-            $this->cacheHelper->build();
-            $cache = $this->cacheHelper->read();
-        }
+        //}
 
         return $cache;
     }

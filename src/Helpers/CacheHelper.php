@@ -41,6 +41,7 @@ class CacheHelper
         usort($pages, [$this, 'sortByDate']);
         $months = [];
         foreach ($pages as $page) {
+            /** @var PicoPage $page */
             $month = explode('/', $page->id)[1];
             if (!key_exists($month, $months)) {
                 $months[$month] = [
@@ -52,13 +53,16 @@ class CacheHelper
                 continue;
             }
             $page->content = $this->pageManager->renderPage($page);
-            $months[$month]['days'][] = $page;
+            $months[$month]['days'][] = $page->toArray();
         }
+        // print_r($months);
 
         return $months;
     }
 
     /**
+     * Removes anything that isn't an actual Journal Entry
+     *
      * @param array|PicoPage[] $entries
      * @return array|PicoPage[]
      */
