@@ -45,7 +45,7 @@ class CacheHelper
             $month = explode('/', $page->id)[1];
             if (!key_exists($month, $months)) {
                 $months[$month] = [
-                    'name' => $month,
+                    'name' => ucfirst($month),
                     'days' => [],
                 ];
             }
